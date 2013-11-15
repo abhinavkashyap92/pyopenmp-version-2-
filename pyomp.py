@@ -2,6 +2,7 @@ from OMPPool import *
 import functools
 import random
 from Clauses import *
+import time
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
@@ -98,20 +99,25 @@ class OMPSingle(OMPParallel):
 		self.__numProcs = kwargs["poolCount"]
 		self.__randomProcessNumber = kwargs["randomProcessNumber"]
 		self.__pool = OMPParallel.returnPool()
+		self.__eventForSingleExecution = kwargs["eventForSingleExecution"]
+		
 
 
 	def __call__(self, function):
 		def wrapper(*args, **kwargs):			
 			if self.__procId == self.__randomProcessNumber:
 				function(*self.__args,**self.__kwargs)
+				time.sleep(0.12)
+				self.__eventForSingleExecution.set()			
+								
 			else:
-				pass
+				self.__pool.getProcessForID(self.__procId).wait(self.__eventForSingleExecution)
 		return wrapper
 
 if __name__ == '__main__':
 	
 	list_ = [1,2,3,4,5,6,7,8]
-	@OMPParallel(numprocs = 2)
+	@OMPParallel(numprocs = 10)
 	def parallel_block(*args,**kwargs):
 		print "Hello world"
 		@OMPSingle(args = args, kwargs = kwargs)

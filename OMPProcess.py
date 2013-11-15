@@ -1,8 +1,8 @@
-from multiprocessing import Process
 import multiprocessing
 import inspect
+import time
 
-class OMPProcess(Process):
+class OMPProcess(object):
 	"""private class representing the openmp process"""
 	def __init__(self, _id = 0, target = None, args = tuple(), kwargs = dict()):
 		super(OMPProcess, self).__init__()
@@ -32,6 +32,14 @@ class OMPProcess(Process):
 	def getTargetKwargs(self):
 		"""return the target kwargs"""
 		return self.__kwargs
+
+	def join(self):
+		self.__process.join()
+
+	def wait(self,event):
+		event.wait()
+		
+
 
 if __name__ == '__main__':
 	def fun(*args, **kwargs):
