@@ -1,6 +1,7 @@
 import OMPPool
 import functools
 import random
+from Clauses import *
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
@@ -22,6 +23,7 @@ class OMPParallel(object):
 				apply(target, args, kwargs)
 			else:
 				# condition is true, create team of processes
+				self.private = ClausePrivate(self.private)
 				pool = OMPPool.OMPPool(numprocs = self.numprocs, target = target, args = args, kwargs = kwargs)
 				pool.start()
 				pool.join()
@@ -71,16 +73,35 @@ class OMPMaster(object):
 	def __init__(self,args=tuple(),kwargs = tuple()):
 		self.__args = args
 		self.__kwargs = kwargs
-		self.proc_id = kwargs["procId"]
+		self.procId = kwargs["procId"]
 
 	def __call__(self,function):
 
 		def wrapper(*args,**kwargs):
 
-			if self.proc_id == 0:
+			if self.procId == 0:
 				function(*self.__args,**self.__kwargs)
 			else:
 				pass
+
+		return wrapper
+
+class OMPSingle(object):
+	def __init__(self,args=tuple(),kwargs= tuple()):
+		self.__args = args
+		self.__kwargs = kwargs
+		self.__procId = kwargs["procId"]
+		self.__numProcs = kwargs["poolCount"]
+		self.__randomProcessNumber = kwargs["randomProcessNumber"]
+
+	def __call__(self, function):
+		def wrapper(*args, **kwargs):
+			
+			if self.__procId == self.__randomProcessNumber:
+				function(*self.__args,**self.__kwargs)
+			else: 
+				pass
+			
 
 		return wrapper
 
@@ -90,10 +111,9 @@ if __name__ == '__main__':
 	@OMPParallel(numprocs = 4)
 	def parallel_block(*args,**kwargs):
 		print "Hello world"
-		@OMPFor(args = args, kwargs = kwargs)
-		def for_block(list_ ,*args,**kwargs):
-			for i in list_:
-				print i
-		for_block(list_)
+		@OMPSingle(args = args, kwargs = kwargs)
+		def single_block(*args,**kwargs):
+			print "inside master block", kwargs["procId"]
+		single_block()
 
 	parallel_block()

@@ -1,5 +1,6 @@
 import OMPProcess
 import multiprocessing
+import random
 
 class OMPPool(object):
 	"""creates a pool of OMPProcessess"""
@@ -10,6 +11,7 @@ class OMPPool(object):
 		self.__args = args
 		self.__kwargs = kwargs
 		self.__kwargs["poolCount"] = self.getPoolCount()
+		self.__kwargs["randomProcessNumber"] = random.randint(0,self.__numprocs -1)
 		self.__processes = [OMPProcess.OMPProcess(_id=i, target=self.__target, args = self.__args, kwargs = self.__kwargs) for i in range(numprocs)]
 
 	def getPoolTarget(self):
