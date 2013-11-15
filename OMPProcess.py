@@ -1,7 +1,8 @@
+from multiprocessing import Process
 import multiprocessing
 import inspect
 
-class OMPProcess(object):
+class OMPProcess(Process):
 	"""private class representing the openmp process"""
 	def __init__(self, _id = 0, target = None, args = tuple(), kwargs = dict()):
 		super(OMPProcess, self).__init__()
@@ -15,10 +16,6 @@ class OMPProcess(object):
 	def start(self):
 		"""starting the OMPProcess"""
 		self.__process.start()
-
-	def join(self):
-		"""wait till the process ends"""
-		self.__process.join()
 
 	def getProcessID(self):
 		"""return the process id"""
