@@ -16,11 +16,9 @@ class ClausePrivate(object):
 		self.__args = private_args
 
 	def  make_junk(self):
-		return_list = list()
-		args_len = len(self.__args)
-		for i in xrange(args_len):
+		for key in self.__args.keys():
 			random.seed()
-			self.__args[i] = random.randint(0,10000)
+			self.__args[key] = random.randint(0,10000)
 
 		return self.__args
 

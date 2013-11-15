@@ -25,7 +25,9 @@ class OMPParallel(object):
 			else:
 				# condition is true, create team of processes
 				if self.private: 
-					self.private = ClausePrivate(self.private)
+					self.private = ClausePrivate(self.private).make_junk()
+					print "self.private: ",self.private
+					
 				
 				OMPParallel.pool = OMPPool(numprocs = self.numprocs, target = target, args = args, kwargs = kwargs)
 				OMPParallel.pool.start()
@@ -103,19 +105,16 @@ class OMPSingle(OMPParallel):
 		self.__eventForSingleEncounter = kwargs["eventForSingleEncounter"]
 		
 
-	
-
 	def __call__(self, function):
 		def wrapper(*args, **kwargs):
 			if self.__procId == self.__numProcs - 1:
 				self.__eventForSingleEncounter.set()
 
-
 			self.__eventForSingleEncounter.wait()
 			if self.__procId == self.__randomProcessNumber:
 				function(*self.__args,**self.__kwargs)
 				self.__eventForSingleExecution.set()			
-													
+
 			else:
 				self.__pool.getProcessForID(self.__procId).wait(self.__eventForSingleExecution)
 			
@@ -125,10 +124,11 @@ class OMPSingle(OMPParallel):
 
 if __name__ == '__main__':
 	
-	list_ = [1,2,3,4,5,6,7,8]
-	@OMPParallel(numprocs =15)
+	
+	private_dict = {"m":1,"n":2}
+	@OMPParallel(numprocs =15,private= private_dict)
 	def parallel_block(*args,**kwargs):
-		print "Hello world"
+		print private_dict
 		@OMPSingle(args = args, kwargs = kwargs)
 		def single_block(*args,**kwargs):
 			print "inside single block", kwargs["procId"]
