@@ -1,8 +1,7 @@
 from OMPPool import *
 import functools
 import random
-from Clauses import *
-import time
+from clauses import *
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
@@ -60,10 +59,11 @@ class OMPFor(object):
 			chunks = self.__getChunks()
 
 			# current processess chunk of iterable
-			chunk = self.__iterable[sum(chunks[:self.__procId]) : sum(chunks[:self.__procId + 1])]
+			self.__kwargs["start"] = chunks[self.__kwargs["procId"]][0]
+			self.__kwargs["end"] = chunks[self.__kwargs["procId"]][1]
 
 			# execute the target function
-			target(chunk, *self.__args, **self.__kwargs)
+			target(iterable, *self.__args, **self.__kwargs)
 
 		return functools.wraps(target) (wrapper)	
 
@@ -73,9 +73,25 @@ class OMPFor(object):
 		chunk, extra = divmod(len(self.__iterable), self.__numProcs)
 		chunks = [chunk for i in range(self.__numProcs)]
 		if extra:
-			randIndex = random.randint(0, self.__numProcs - 1)
-			chunks[randIndex] = chunks[randIndex] + extra
-		return chunks
+		 	for i in range(len(chunks)):
+				if extra:
+					chunks[i] = chunks[i] + 1
+					extra = extra - 1
+				else:
+		 			break
+
+		start = 0
+		end = 0
+		
+		# list of tuples representing the start and end indexes
+		result = []
+
+		for i in range(self.__numProcs):
+			end = end + chunks[i]
+			result.append((start, end))
+			start = end
+
+		return result
 
 class OMPMaster(object):
 
@@ -102,8 +118,7 @@ class OMPSingle(OMPParallel):
 		self.__randomProcessNumber = kwargs["randomProcessNumber"]
 		self.__pool = OMPParallel.returnPool()
 		self.__eventForSingleExecution = kwargs["eventForSingleExecution"]
-		self.__eventForSingleEncounter = kwargs["eventForSingleEncounter"]
-		
+		self.__eventForSingleEncounter = kwargs["eventForSingleEncounter"]		
 
 	def __call__(self, function):
 		def wrapper(*args, **kwargs):
@@ -123,16 +138,35 @@ class OMPSingle(OMPParallel):
 	
 
 if __name__ == '__main__':
-	
-	
+	list_ = list(range(1, 3, 1))
 	private_dict = {"m":1,"n":2}
-	@OMPParallel(numprocs =15,private= private_dict)
-	def parallel_block(*args,**kwargs):
-		print private_dict
-		@OMPSingle(args = args, kwargs = kwargs)
-		def single_block(*args,**kwargs):
-			print "inside single block", kwargs["procId"]
-		single_block()
-		print "After single block: ",kwargs["procId"]
+	# @OMPParallel(numprocs =2,private= private_dict)
+	# def parallel_block(*args,**kwargs):
+	# 	print "hello world"
+	# 	@OMPSingle(args = args, kwargs = kwargs)
+	# 	def single_block(*args,**kwargs):
+	# 		print "inside single block", kwargs["procId"]
+	# 	single_block()
+	# 	print "After single block: ",kwargs["procId"]
+		
+	# 	@OMPSingle(args=args,kwargs=kwargs)
+	# 	def single_block2(*args,**kwargs):
+	# 		print "inside the single block 2: ",kwargs["procId"]
+	# 	single_block2()
+	# 	print "after the single block 2: ",kwargs["procId"]
 
-	parallel_block()
+	# parallel_block()
+
+	@OMPParallel(numprocs=4)
+	def foo(*args,**kwargs):
+		res = list(range(2))
+
+		@OMPFor(args= args, kwargs=kwargs)
+		def for_block(a,*args,**kwargs):
+			for i in range(kwargs["start"], kwargs["end"]):
+				res[i] = a[i] ** 2
+				print "processId: " + str(kwargs["procId"]) + "\ta: " + str(a[i]) + "\tres: " + str(res[i]) 
+		
+		for_block(list_)
+		
+	foo()	
