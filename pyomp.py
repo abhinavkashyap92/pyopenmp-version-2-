@@ -1,7 +1,7 @@
 from OMPPool import *
 import functools
 import random
-from Clauses import *
+from clauses import *
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
