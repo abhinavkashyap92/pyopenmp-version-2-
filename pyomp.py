@@ -170,22 +170,22 @@ if __name__ == '__main__':
 
 	list_ = list(range(1, 3, 1))
 	private_dict = {"m":1,"n":2}
-	# @OMPParallel(numprocs =2,private= private_dict)
-	# def parallel_block(*args,**kwargs):
-	# 	print "hello world"
-	# 	@OMPSingle(args = args, kwargs = kwargs)
-	# 	def single_block(*args,**kwargs):
-	# 		print "inside single block", kwargs["procId"]
-	# 	single_block()
-	# 	print "After single block: ",kwargs["procId"]
+	@OMPParallel(numprocs =2,private= private_dict)
+	def parallel_block(*args,**kwargs):
+		print "hello world"
+		@OMPSingle(args = args, kwargs = kwargs)
+		def single_block(*args,**kwargs):
+			print "inside single block", kwargs["procId"]
+		single_block()
+		print "After single block: ",kwargs["procId"]
 		
-	# 	@OMPSingle(args=args,kwargs=kwargs)
-	# 	def single_block2(*args,**kwargs):
-	# 		print "inside the single block 2: ",kwargs["procId"]
-	# 	single_block2()
-	# 	print "after the single block 2: ",kwargs["procId"]
+		@OMPSingle(args=args,kwargs=kwargs)
+		def single_block2(*args,**kwargs):
+			print "inside the single block 2: ",kwargs["procId"]
+		single_block2()
+		print "after the single block 2: ",kwargs["procId"]
 
-	# parallel_block()
+	parallel_block()
 
 	@OMPParallel(numprocs=4)
 	def foo(*args,**kwargs):
