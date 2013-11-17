@@ -1,7 +1,7 @@
 from OMPPool import *
 import functools
 import random
-from clauses import *
+from Clauses import *
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
@@ -138,9 +138,7 @@ class OMPSingle(OMPParallel):
 	
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-	
-	
+		
 	list_ = [1,2,3,4,5,6,7,8]
 	private_dict = {"m":1,"n":2}
 	@OMPParallel(numprocs =2,private= private_dict)
@@ -169,7 +167,7 @@ if __name__ == '__main__':
 		for_block(list_)
 
 	foo()
-=======
+
 	list_ = list(range(1, 3, 1))
 	private_dict = {"m":1,"n":2}
 	# @OMPParallel(numprocs =2,private= private_dict)
@@ -202,4 +200,4 @@ if __name__ == '__main__':
 		for_block(list_)
 		
 	foo()	
->>>>>>> dcdf24b350c76d223a6fc9ae9a7016a4acb9bf45
+
