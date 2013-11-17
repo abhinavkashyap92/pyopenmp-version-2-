@@ -25,13 +25,9 @@ class OMPParallel(object):
 				# condition is true, create team of processes
 				if self.private: 
 					self.private = ClausePrivate(self.private).make_junk()
-					print "self.private: ",self.private
-					
-				
 				OMPParallel.pool = OMPPool(numprocs = self.numprocs, target = target, args = args, kwargs = kwargs)
 				OMPParallel.pool.start()
 				OMPParallel.pool.join()
-
 		return functools.wraps(target) (wrapper)
 
 	@classmethod

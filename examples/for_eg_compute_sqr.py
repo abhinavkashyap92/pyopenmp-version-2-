@@ -1,4 +1,6 @@
-from pyomp import *
+import sys
+sys.path.insert(0, '../')
+from src.pyomp import * 
 
 def main():
 	

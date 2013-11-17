@@ -1,4 +1,5 @@
 import random
+import multiprocessing
 """
 	*Private class for implementing the private clause
 	*
@@ -21,7 +22,6 @@ class ClausePrivate(object):
 			self.__args[key] = random.randint(0,10000)
 
 		return self.__args
-
 if __name__ == "__main__":
 
 	private_list = [1,2,3]
