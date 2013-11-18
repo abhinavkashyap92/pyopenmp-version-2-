@@ -1,11 +1,6 @@
 import random
 import multiprocessing 
 
-"""
-	*Private class for implementing the private clause
-	*
-	* 
-"""
 
 class ClauseShared(object):
 	"""docstring for ClauseShared"""
@@ -52,7 +47,11 @@ class ClauseShared(object):
 #		
 #	
 #================================================================================
+"""
+	* Class for Private clause
 
+
+"""
 		
 class ClausePrivate(object):
 
