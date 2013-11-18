@@ -17,24 +17,26 @@ class ClauseShared(object):
 
 	def createShared(self):
 		'''
-		Supports double,int,list and dictionary
+		Supports list and dictionary
 
 		'''
-		for eachVar in self.__shared_variables:
-			if type(eachVar[1]) is type([]):
-				self.__kwargs[eachVar[0]] = multiprocessing.Manager().list(eachVar[1])
-			elif type(eachVar[1]) is type({}):
-				self.__kwargs[eachVar[0]] = multiprocessing.Manager().dict(eachVar[1])
+		if self.__shared_variables:			
+			for eachVar in self.__shared_variables:
+				if type(eachVar[1]) is type([]):
+					self.__kwargs[eachVar[0]] = multiprocessing.Manager().list(eachVar[1])
+				elif type(eachVar[1]) is type({}):
+					self.__kwargs[eachVar[0]] = multiprocessing.Manager().dict(eachVar[1])
 		
 		return self.__kwargs
 
 	def copyBack(self):
-		for i in range(len(self.__shared_variables)):
-			if type(self.__shared_variables[i][1]) is type([]):
-				self.__shared_variables[i][1][:] = self.__kwargs[self.__shared_variables[i][0]]
-			elif type(self.__shared_variables[i][1]) is type({}):
-				self.__shared_variables[i][1].clear()
-				self.__shared_variables[i][1].update(self.__kwargs[self.__shared_variables[i][0]])
+		if self.__shared_variables:
+			for i in range(len(self.__shared_variables)):
+				if type(self.__shared_variables[i][1]) is type([]):
+					self.__shared_variables[i][1][:] = self.__kwargs[self.__shared_variables[i][0]]
+				elif type(self.__shared_variables[i][1]) is type({}):
+					self.__shared_variables[i][1].clear()
+					self.__shared_variables[i][1].update(self.__kwargs[self.__shared_variables[i][0]])
 
 #======================== How to use shared =====================================
 #           only list and dictionaries

@@ -1,11 +1,11 @@
 from OMPPool import *
 import functools
 import random
-from Clauses import *
+from clauses import *
 
 class OMPParallel(object):
 	"""implemantation for parallel directive - OMPParallel"""
-	def __init__(self, numprocs = None, condition = True, private = None, shared = None, firstprivate = None):
+	def __init__(self, numprocs = 4, condition = True, private = None, shared = None, firstprivate = None):
 		super(OMPParallel, self).__init__()
 		self.numprocs = numprocs
 		self.private = private
@@ -25,12 +25,13 @@ class OMPParallel(object):
 				# condition is true, create team of processes
 				if self.private: 
 					self.private = ClausePrivate(self.private).make_junk()
-					print "self.private: ",self.private
 					
-				
+				shared_object = ClauseShared(self.shared,kwargs)
+				kwargs = shared_object.createShared()
 				OMPParallel.pool = OMPPool(numprocs = self.numprocs, target = target, args = args, kwargs = kwargs)
 				OMPParallel.pool.start()
 				OMPParallel.pool.join()
+				shared_object.copyBack()
 
 		return functools.wraps(target) (wrapper)
 
@@ -140,36 +141,43 @@ class OMPSingle(OMPParallel):
 if __name__ == '__main__':
 	
 
-	list_ = list(range(1, 3, 1))
-	private_dict = {"m":1,"n":2}
-	@OMPParallel(numprocs =2,private= private_dict)
-	def parallel_block(*args,**kwargs):
-		print "hello world"
-		@OMPSingle(args = args, kwargs = kwargs)
-		def single_block(*args,**kwargs):
-			print "inside single block", kwargs["procId"]
-		single_block()
-		print "After single block: ",kwargs["procId"]
+	# list_ = list(range(1, 3, 1))
+	# private_dict = {"m":1,"n":2}
+	# @OMPParallel(numprocs =2,private= private_dict)
+	# def parallel_block(*args,**kwargs):
+	# 	print "hello world"
+	# 	print private_dict["m"]
+	# 	@OMPSingle(args = args, kwargs = kwargs)
+	# 	def single_block(*args,**kwargs):
+	# 		print "inside single block", kwargs["procId"]
+	# 	single_block()
+	# 	print "After single block: ",kwargs["procId"]
 		
-		@OMPSingle(args=args,kwargs=kwargs)
-		def single_block2(*args,**kwargs):
-			print "inside the single block 2: ",kwargs["procId"]
-		single_block2()
-		print "after the single block 2: ",kwargs["procId"]
+	# 	@OMPSingle(args=args,kwargs=kwargs)
+	# 	def single_block2(*args,**kwargs):
+	# 		print "inside the single block 2: ",kwargs["procId"]
+	# 	single_block2()
+	# 	print "after the single block 2: ",kwargs["procId"]
 
-	parallel_block()
+	# parallel_block()
 
-	@OMPParallel(numprocs=4)
-	def foo(*args,**kwargs):
-		res = list(range(2))
+	# @OMPParallel(numprocs=4)
+	# def foo(*args,**kwargs):
+	# 	res = list(range(2))
 
-		@OMPFor(args= args, kwargs=kwargs)
-		def for_block(a,*args,**kwargs):
-			for i in range(kwargs["start"], kwargs["end"]):
-				res[i] = a[i] ** 2
-				print "processId: " + str(kwargs["procId"]) + "\ta: " + str(a[i]) + "\tres: " + str(res[i]) 
+	# 	@OMPFor(args= args, kwargs=kwargs)
+	# 	def for_block(a,*args,**kwargs):
+	# 		for i in range(kwargs["start"], kwargs["end"]):
+	# 			res[i] = a[i] ** 2
+	# 			print "processId: " + str(kwargs["procId"]) + "\ta: " + str(a[i]) + "\tres: " + str(res[i]) 
 		
-		for_block(list_)
+	# 	for_block(list_)
 		
-	foo()	
-
+	# foo()	
+	l = [1,2,4]
+	@OMPParallel(numprocs=4,shared=(('list_',l),))
+	def fun(*args,**kwargs):
+		kwargs['list_'].append(100)
+		print kwargs['list_']
+	fun()
+	print "After parallel block", l
