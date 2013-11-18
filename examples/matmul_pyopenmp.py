@@ -21,9 +21,9 @@ def print_list(a):
 
 def main():
 
-	a = fill_list(600)
-	b = fill_list(600)
-	c = fill_list(600)
+	a = fill_list(500)
+	b = fill_list(500)
+	c = fill_list(500)
 
 	#create a team of processes
 	@OMPParallel(numprocs=4)
