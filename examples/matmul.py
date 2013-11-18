@@ -16,9 +16,9 @@ def print_list(a):
 	print "]"
 
 def main():
-	a = fill_list(600)
-	b = fill_list(600)
-	c = fill_list(600)
+	a = fill_list(500)
+	b = fill_list(500)
+	c = fill_list(500)
 
 	for i in range(len(a)):
 		for j in range(len(b)):
