@@ -1,5 +1,4 @@
 import random
-<<<<<<< HEAD:clauses.py
 import multiprocessing 
 
 
@@ -50,9 +49,6 @@ class ClauseShared(object):
 #		
 #	
 #================================================================================
-=======
-import multiprocessing
->>>>>>> d7e2e3f244484007908123106e46578fd891fb37:src/clauses.py
 """
 	* Class for Private clause
 
