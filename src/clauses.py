@@ -1,4 +1,5 @@
 import random
+<<<<<<< HEAD:clauses.py
 import multiprocessing 
 
 
@@ -49,6 +50,9 @@ class ClauseShared(object):
 #		
 #	
 #================================================================================
+=======
+import multiprocessing
+>>>>>>> d7e2e3f244484007908123106e46578fd891fb37:src/clauses.py
 """
 	* Class for Private clause
 
@@ -71,7 +75,6 @@ class ClausePrivate(object):
 			self.__args[key] = random.randint(0,10000)
 
 		return self.__args
-
 if __name__ == "__main__":
 
 	private_list = [1,2,3]

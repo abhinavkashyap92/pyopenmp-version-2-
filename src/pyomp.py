@@ -25,6 +25,7 @@ class OMPParallel(object):
 				# condition is true, create team of processes
 				if self.private: 
 					self.private = ClausePrivate(self.private).make_junk()
+<<<<<<< HEAD:pyomp.py
 					
 				shared_object = ClauseShared(self.shared,kwargs)
 				kwargs = shared_object.createShared()
@@ -33,6 +34,11 @@ class OMPParallel(object):
 				OMPParallel.pool.join()
 				shared_object.copyBack()
 
+=======
+				OMPParallel.pool = OMPPool(numprocs = self.numprocs, target = target, args = args, kwargs = kwargs)
+				OMPParallel.pool.start()
+				OMPParallel.pool.join()
+>>>>>>> d7e2e3f244484007908123106e46578fd891fb37:src/pyomp.py
 		return functools.wraps(target) (wrapper)
 
 	@classmethod
