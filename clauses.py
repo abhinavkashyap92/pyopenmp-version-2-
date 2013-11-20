@@ -44,7 +44,7 @@ class ClauseShared(object):
 #	    dict = {'a':1}
 #	@OMPParallel(shared=(('list',list),('dict',dict))) # shared is a tuple of tuples each having name of the varible and its value - name can be anything
 #	def fun(*args,**kwargs):
-#		some code!
+#		some code!	
 # 		access by kwargs['name'] for list and dictionaries
 #		
 #	
